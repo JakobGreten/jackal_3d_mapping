@@ -1,0 +1,10 @@
+#include "jackal_3d_mapping/DBSCAN.hpp"
+void DBSCAN::run(std::vector<cv::Vec4i> lines){
+    ROS_INFO_STREAM("JAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+}
+DBSCAN::~DBSCAN()
+{
+}
+DBSCAN::DBSCAN()
+{
+}

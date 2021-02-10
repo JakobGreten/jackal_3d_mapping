@@ -1,0 +1,2 @@
+jackal_lidar_points_topic: "/os1_cloud_node/points"
+jackal_zed_points_topic: "/points"
