@@ -21,7 +21,7 @@ output="screen"/>
 <include file="$(find lego_loam)/launch/run.launch">
    <arg name="run_rviz" value="false" />
 </include>
-<include file="$(find depthcloud_pointcloud_merge)/launch/depthcloud_to_pointcloud.launch"/>
+<include file="$(find jackal_3d_mapping)/launch/depthcloud_to_pointcloud.launch"/>
 
 
 <node name="filter_zed" pkg="filter_pointcloud" type="filter_zed" output="screen"/>
