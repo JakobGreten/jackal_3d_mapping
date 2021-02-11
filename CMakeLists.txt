@@ -249,7 +249,13 @@ add_executable(opencv_stair_classifier src/opencv_stair_classifier.cpp)
 target_link_libraries(opencv_stair_classifier ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(opencv_stair_classifier ${catkin_EXPORTED_TARGETS})
 
+add_executable(filter_zed src/filter_zed.cpp)
+target_link_libraries(filter_zed ${catkin_LIBRARIES})
+add_dependencies(filter_zed ${catkin_EXPORTED_TARGETS})
 
+add_executable(filter_lidar src/filter_lidar.cpp)
+target_link_libraries(filter_lidar ${catkin_LIBRARIES})
+add_dependencies(filter_lidar ${catkin_EXPORTED_TARGETS})
 
 # add_executable(normal_filter_comparison_demo
 #   src/normal_filter_comparison_node.cpp

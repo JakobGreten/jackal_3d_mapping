@@ -24,8 +24,8 @@ output="screen"/>
 <include file="$(find jackal_3d_mapping)/launch/depthcloud_to_pointcloud.launch"/>
 
 
-<node name="filter_zed" pkg="filter_pointcloud" type="filter_zed" output="screen"/>
-<node name="filter_lidar" pkg="filter_pointcloud" type="filter_lidar" output="screen"/>
+<node name="filter_zed" pkg="jackal_3d_mapping" type="filter_zed" output="screen"/>
+<node name="filter_lidar" pkg="jackal_3d_mapping" type="filter_lidar" output="screen"/>
 
 <node name="rviz" pkg="rviz" type="rviz" args="-d $(find jackal_3d_mapping)/rviz/octomap_gmapping.rviz" output="screen" />
 </launch>

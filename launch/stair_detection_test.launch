@@ -26,8 +26,8 @@ output="screen"/>
     <arg name="dec_y" value="3"/>
 </include>
 
-<node name="filter_zed" pkg="filter_pointcloud" type="filter_zed" output="screen"/>
-<!-- <node name="filter_lidar" pkg="filter_pointcloud" type="filter_lidar" output="screen"/> -->
+<node name="filter_zed" pkg="jackal_3d_mapping" type="filter_zed" output="screen"/>
+<!-- <node name="filter_lidar" pkg="jackal_3d_mapping" type="filter_lidar" output="screen"/> -->
 
 <!-- <node name="stair_classifier" pkg="jackal_3d_mapping" type="stair_classifier" output="screen"/> -->
 
