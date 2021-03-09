@@ -240,6 +240,10 @@ add_executable(transform_zed_tracking_loam src/transform_zed_tracking_loam.cpp)
 target_link_libraries(transform_zed_tracking_loam ${catkin_LIBRARIES})
 add_dependencies(transform_zed_tracking_loam ${catkin_EXPORTED_TARGETS})
 
+add_executable(transform_zed_opti src/transform_zed_opti.cpp)
+target_link_libraries(transform_zed_opti ${catkin_LIBRARIES})
+add_dependencies(transform_zed_opti ${catkin_EXPORTED_TARGETS})
+
 
 add_executable(stair_classifier src/stair_classifier.cpp)
 target_link_libraries(stair_classifier ${catkin_LIBRARIES})
