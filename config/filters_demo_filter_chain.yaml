@@ -22,7 +22,7 @@ grid_map_filters:
     params:
       input_layer: elevation
       output_layer: elevation_inpainted
-      radius: 0.05
+      radius: 1.0                                 #Eigentlich 0.05!!!
 
   # Reduce noise with a radial blurring filter.
   - name: mean_in_radius
@@ -49,7 +49,7 @@ grid_map_filters:
     params:
       input_layer: elevation_inpainted
       output_layers_prefix: normal_vectors_
-      radius: 0.05
+      radius: 0.5
       normal_vector_positive_axis: z
 
   # Add a color layer for visualization based on the surface normal.
@@ -103,18 +103,18 @@ grid_map_filters:
       output_layer: traversability
       expression: 0.5 * (1.0 - (slope / 0.6)) + 0.5 * (1.0 - (roughness / 0.1))
 
-  # Set lower threshold on traversability.
-  - name: traversability_lower_threshold
-    type: gridMapFilters/ThresholdFilter
-    params:
-      layer: traversability
-      lower_threshold: 0.0
-      set_to: 0.0
+  # # Set lower threshold on traversability.
+  # - name: traversability_lower_threshold
+  #   type: gridMapFilters/ThresholdFilter
+  #   params:
+  #     layer: traversability
+  #     lower_threshold: 0.0
+  #     set_to: 0.0
 
-  # Set upper threshold on traversability.
-  - name: traversability_upper_threshold
-    type: gridMapFilters/ThresholdFilter
-    params:
-      layer: traversability
-      upper_threshold: 1.0
-      set_to: 1.0 # Other uses: .nan, .inf
+  # # Set upper threshold on traversability.
+  # - name: traversability_upper_threshold
+  #   type: gridMapFilters/ThresholdFilter
+  #   params:
+  #     layer: traversability
+  #     upper_threshold: 1.0
+  #     set_to: 1.0 # Other uses: .nan, .inf

@@ -1,0 +1,34 @@
+<launch>
+    <param name="use_sim_time"  value="true" />
+    <rosparam command="load" file="$(find jackal_3d_mapping)/params/jackal.yaml" />
+    
+    <node pkg="topic_tools" type="relay" name="relay_lidar" args="/lidar_points_filtered /points"
+    output="screen"/>
+    <node pkg="topic_tools" type="relay" name="relay_zed" args="/zed_points_filtered /points"
+    output="screen"/>
+    
+    
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_zed_tracking_base_link" args="0 0 0 0 0 0       /zed_tracking_base_link /base_link" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_zed_map" args="0 0 0 0 0 0        /zed_map /map" />
+    
+    <include file="$(find jackal_3d_mapping)/launch/trajectory_tracker.launch"/>
+    
+    
+     <!--<node name="pub_text" pkg="rostopic" type="rostopic"
+         args="pub /msg std_msgs/String 'Testssss $(arg jackal_lidar_points_topic)'"
+         output="screen" />
+      <node name="print_text" pkg="rostopic" type="rostopic"
+         args="echo /msg" output="screen" />-->
+    
+    <include file="$(find jackal_3d_mapping)/launch/jackal_octomap_mapping.launch"/>
+    <!--<include file="$(find jackal_navigation)/launch/gmapping_demo.launch"/>-->
+    <include file="$(find jackal_3d_mapping)/launch/depthcloud_to_pointcloud.launch">
+        <arg name="generate_colored_pointcloud" default="false"/>
+    </include>
+    <!-- <include file="$(find pointcloud_to_laserscan)/launch/pointcloud_to_laserscan.launch"/> -->
+    
+    <node name="filter_zed" pkg="jackal_3d_mapping" type="filter_zed" output="screen"/>
+    <node name="filter_lidar" pkg="jackal_3d_mapping" type="filter_lidar" output="screen"/>
+    
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find jackal_3d_mapping)/rviz/octomap_gmapping.rviz" output="screen" />
+    </launch>

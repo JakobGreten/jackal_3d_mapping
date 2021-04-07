@@ -1,0 +1,7 @@
+rosrun tf2_ros static_transform_publisher -1.437 0.336 0.166 1.778266 0.125386 1.556461 /zed_map /optitrack_map
+rosrun tf2_ros static_transform_publisher -1.417 0.332 0.293 1.755006 -0.047719 1.573077 /zed_map /optitrack_map
+roslaunch tf_keyboard_cal rviz_demo.launch
+(roslaunch tf_keyboard_cal tf_im_world_to_thing.launch)
+
+Ungenauigkeit durch 3 Nachkommastellen -> Punkte weiter auseinander, mehr Punkte
+timing verzögerung?

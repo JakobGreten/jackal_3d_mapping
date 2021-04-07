@@ -13,8 +13,8 @@
 #include <termios.h>
 
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclPCZed(new pcl::PointCloud<pcl::PointXYZRGB>);
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclPCFilteredZed(new pcl::PointCloud<pcl::PointXYZRGB>);
+pcl::PointCloud<pcl::PointXYZ>::Ptr pclPCZed(new pcl::PointCloud<pcl::PointXYZ>);
+pcl::PointCloud<pcl::PointXYZ>::Ptr pclPCFilteredZed(new pcl::PointCloud<pcl::PointXYZ>);
 sensor_msgs::PointCloud2::Ptr pcFilteredZed(new sensor_msgs::PointCloud2);
 //pcl::visualization::CloudViewer viewer("Simple Cloud Viewer");
 
@@ -28,7 +28,7 @@ void zedCallback(sensor_msgs::PointCloud2 pcZed)
     pcl::fromROSMsg(pcZed, *pclPCZed);
     
     
-    pcl::CropBox<pcl::PointXYZRGB> boxFilter;
+    pcl::CropBox<pcl::PointXYZ> boxFilter;
     boxFilter.setInputCloud(pclPCZed);
 
     float zedMinX = -std::numeric_limits<float>::max();

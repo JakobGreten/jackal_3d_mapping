@@ -7,6 +7,7 @@ output="screen"/>
 <node pkg="topic_tools" type="relay" name="relay_zed" args="/zed_points_downsampled /points"
 output="screen"/>
 
+<node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_zed_tracking_base_link" args="0 0 0 0 0 0   /zed_tracking_base_link /base_link  " />
 
  <!--<node name="pub_text" pkg="rostopic" type="rostopic"
      args="pub /msg std_msgs/String 'Testssss $(arg jackal_lidar_points_topic)'"

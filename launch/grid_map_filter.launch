@@ -22,6 +22,6 @@
    <!--</group>-->
 
    <!-- Launch the grid map visualizer -->
-  <!-- <node pkg="grid_map_visualization" type="grid_map_visualization" name="grid_map_visualization" output="screen" /> -->
+  <node pkg="grid_map_visualization" type="grid_map_visualization" name="grid_map_visualization" output="screen" />
 
 </launch>
