@@ -1,0 +1,27 @@
+<launch>
+  <rosparam command="load" file="$(find jackal_3d_mapping)/config/traversibility_filter_params.yaml" />
+  <arg name="filter" default="false"/>
+  <!-- <rosparam command="load" file="$(find grid_map_demos)/config/filters_demo.yaml" /> -->
+  <!-- Load the octomap -->
+  <node pkg="octomap_server" type="octomap_server_static" name="octomap_server" args="$(find jackal_3d_mapping)/map/stairs_small_slope_4cm.bt" output="screen"/>
+
+  <!-- Launch the octomap conversion node -->
+  <node pkg="grid_map_demos" type="octomap_to_gridmap_demo" name="octomap_to_gridmap_demo" output="screen" />
+
+  
+  <!-- Launch RViz with the demo configuration -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find jackal_3d_mapping)/rviz/filters_demo.rviz" />
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find jackal_3d_mapping)/rviz/octomap_to_gridmap_demo.rviz" /> -->
+
+ <!--<group  unless="$(arg filter)"> -->
+  <node pkg="grid_map_demos" type="filters_demo" name="grid_map_filter_demo" output="screen">
+  	<param name="input_topic" value="/octomap_to_gridmap_demo/grid_map" />
+  	<param name="output_topic" value="filtered_map" />
+    <rosparam command="load" file="$(find jackal_3d_mapping)/config/traversibility_filter_chain.yaml" />
+   </node>
+   <!--</group>-->
+
+   <!-- Launch the grid map visualizer -->
+  <node pkg="grid_map_visualization" type="grid_map_visualization" name="grid_map_visualization" output="screen" />
+
+</launch>

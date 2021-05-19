@@ -9,16 +9,16 @@
 bool debug = true;
 
 ros::Publisher pub;
-int lowThreshold = 7;
-int highThreshold = 349;
+int lowThreshold = 10;
+int highThreshold = 129;
 const int max_lowThreshold = 100;
 int canny_kernel_size = 1;
 cv::Mat src_scaled, dst, zoomedImage, cdst, processed, erosion_dst, dilation_dst, stairs_dst;
 
 cv::Rect roi;
-int lineThreshold = 8;
-int minLineLength = 21;
-int maxLineGap = 5;
+int lineThreshold = 13;
+int minLineLength = 9;
+int maxLineGap = 4;
 int rho = 1;
 int theta_scale = 100;
 
@@ -26,13 +26,14 @@ int scale = 1;
 int delta = 0;
 int laplacian_kernel_size = 0;
 
-int blurRadius = 18;
+int blurRadius = 37;
 
 const char *src_window_name = "Original Image";
 const char *process_window_name = "Processed Image";
 const char *canny_window_name = "Canny";
 const char *laplacian_window_name = "Laplacian";
 const char *line_window_name = "Hough Line Transform";
+const char *extracted_line_window_name = "Extracted Lines";
 
 int erosion_elem = 0;
 int erosion_size = 0;
@@ -40,6 +41,8 @@ int dilation_elem = 0;
 int dilation_size = 1;
 int const max_elem = 2;
 int const max_kernel_size = 21;
+
+bool grid_map_received = false;
 
 //DBSCAN dbscan;
 
@@ -74,7 +77,7 @@ void updateLaplacian(int, void *)
     {
         // imshow(laplacian_window_name, dst);
         imshow(laplacian_window_name, dst(roi));
-        updateLineDetection(0, 0);
+        //updateLineDetection(0, 0);
     }
 }
 
@@ -92,7 +95,7 @@ void updatePreprocess(int, void *)
         //updateLineDetection(0, 0);
     }
 }
-void Erosion(int, void *)
+/*void Erosion(int, void *)
 {
     int erosion_type = 0;
     if (erosion_elem == 0)
@@ -139,7 +142,7 @@ void Dilation(int, void *)
     {
         imshow("Dilation Demo", dilation_dst);
     }
-}
+}*/
 
 static void updateLineDetection(int, void *)
 {
@@ -172,7 +175,7 @@ static void updateLineDetection(int, void *)
     if (debug)
     {
         imshow(line_window_name, cdstP(roi));
-        imshow("Extracted Lines", stairs_dst(roi));
+        imshow(extracted_line_window_name, stairs_dst(roi));
     }
     ROS_INFO_STREAM("Lines extreacted: " << linesP.size());
 }
@@ -187,6 +190,11 @@ void lineClustering(std::vector<cv::Vec4i> lines)
 
 void gridMapCallback(grid_map_msgs::GridMap msg)
 {
+   /* if(grid_map_received){
+        return;
+    }
+    grid_map_received = true;
+    */
     grid_map::GridMap map;
     grid_map::GridMapRosConverter::fromMessage(msg, map);
 
@@ -214,8 +222,9 @@ void gridMapCallback(grid_map_msgs::GridMap msg)
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     double resizeFactor = 3.0;
-    cv::resize(src, src_scaled, cv::Size(), resizeFactor, resizeFactor);
+    //src_scaled = src;
 
+    cv::resize(src, src_scaled, cv::Size(), resizeFactor, resizeFactor);
     if (debug)
     {
         cv::namedWindow(src_window_name, cv::WINDOW_NORMAL);
@@ -223,8 +232,9 @@ void gridMapCallback(grid_map_msgs::GridMap msg)
         cv::namedWindow(canny_window_name, cv::WINDOW_NORMAL);
         cv::namedWindow(laplacian_window_name, cv::WINDOW_NORMAL);
         cv::namedWindow(line_window_name, cv::WINDOW_NORMAL);
-        cv::namedWindow("Erosion Demo", cv::WINDOW_NORMAL);
-        cv::namedWindow("Dilation Demo", cv::WINDOW_NORMAL);
+        cv::namedWindow(extracted_line_window_name, cv::WINDOW_NORMAL);
+        //cv::namedWindow("Erosion Demo", cv::WINDOW_NORMAL);
+        //cv::namedWindow("Dilation Demo", cv::WINDOW_NORMAL);
         int width = 920;
         int height = 980;
         cv::resizeWindow(src_window_name, width, height);
@@ -232,14 +242,18 @@ void gridMapCallback(grid_map_msgs::GridMap msg)
         cv::resizeWindow(canny_window_name, width, height);
         cv::resizeWindow(laplacian_window_name, width, height);
         cv::resizeWindow(line_window_name, width, height);
+        cv::resizeWindow(extracted_line_window_name, width, height);
         cv::moveWindow(line_window_name, width + 50, 0);
     }
-    roi.width = src_scaled.size().width / 3;
-    roi.height = src_scaled.size().height / 3;
+    roi.width = src_scaled.size().width / 11;
+    roi.height = src_scaled.size().height / 11;
 
-    roi.x = 0;
-    roi.y = src_scaled.size().height - roi.height;
-
+    // roi.x = roi.width/2;
+    // roi.y = src_scaled.size().height- 2* roi.height;
+    roi.x = 500;
+    roi.y = 3100;
+    ROS_INFO_STREAM("x"<<roi.x);
+    ROS_INFO_STREAM("y"<<roi.y);
     // zoomedImage = src_scaled(roi);
     // cv::imshow(src_scaled_window_name, zoomedImage);
 
@@ -258,12 +272,12 @@ void gridMapCallback(grid_map_msgs::GridMap msg)
     updatePreprocess(0, 0);
     //Dilation(0, 0);
     // updateLaplacian(0, 0);
-    updateCanny(0, 0);
+    //updateCanny(0, 0);
 
-    updateLineDetection(0, 0);
+    //updateLineDetection(0, 0);
 
-    Dilation(0, 0);
-    Erosion(0, 0);
+    //Dilation(0, 0);
+    //Erosion(0, 0);
     ROS_INFO_STREAM("Image displayed");
 
     // Show results
@@ -288,33 +302,33 @@ void gridMapCallback(grid_map_msgs::GridMap msg)
 
         cv::createTrackbar("Blur Radius", process_window_name, &blurRadius, 500, updatePreprocess);
 
-        cv::createTrackbar("Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", "Erosion Demo",
-                           &erosion_elem, max_elem,
-                           Erosion);
-        cv::createTrackbar("Kernel size:\n 2n +1", "Erosion Demo",
-                           &erosion_size, max_kernel_size,
-                           Erosion);
-        cv::createTrackbar("Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", "Dilation Demo",
-                           &dilation_elem, max_elem,
-                           Dilation);
-        cv::createTrackbar("Kernel size:\n 2n +1", "Dilation Demo",
-                           &dilation_size, max_kernel_size,
-                           Dilation);
+        // cv::createTrackbar("Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", "Erosion Demo",
+        //                    &erosion_elem, max_elem,
+        //                    Erosion);
+        // cv::createTrackbar("Kernel size:\n 2n +1", "Erosion Demo",
+        //                    &erosion_size, max_kernel_size,
+        //                    Erosion);
+        // cv::createTrackbar("Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", "Dilation Demo",
+        //                    &dilation_elem, max_elem,
+        //                    Dilation);
+        // cv::createTrackbar("Kernel size:\n 2n +1", "Dilation Demo",
+        //                    &dilation_size, max_kernel_size,
+        //                    Dilation);
 
         // imshow("Source", src(roi));
         // imshow("Detected Lines (in red) - Standard Hough Line Transform", cdst(roi));
         // imshow(line_window_name, cdstP(roi));
         cv::waitKey(0);
     }
-    cv::Mat stairs_dst_resize;
-    cv::resize(dilation_dst, stairs_dst_resize, src.size());
+    // cv::Mat stairs_dst_resize;
+    // cv::resize(dilation_dst, stairs_dst_resize, src.size());
 
-    grid_map::GridMapCvConverter::addLayerFromImage<unsigned char, 1>(stairs_dst_resize, "stairs", map, 0.0, 1.0);
+    // grid_map::GridMapCvConverter::addLayerFromImage<unsigned char, 1>(stairs_dst_resize, "stairs", map, 0.0, 1.0);
 
-    // Publish grid map.
-    grid_map_msgs::GridMap message;
-    grid_map::GridMapRosConverter::toMessage(map, message);
-    pub.publish(message);
+    // // Publish grid map.
+    // grid_map_msgs::GridMap message;
+    // grid_map::GridMapRosConverter::toMessage(map, message);
+    // pub.publish(message);
 }
 
 int main(int argc, char **argv)

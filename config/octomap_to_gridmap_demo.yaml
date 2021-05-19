@@ -48,6 +48,15 @@ grid_map_visualization:
         layer: traversability
         data_min: 0.0
         data_max: 1.0
+    - name: traversability_binary_grid
+      type: occupancy_grid
+      params:
+        layer: occupancy
+        data_min: 0.0
+        data_max: 1.0
+   
+
+
     # - name: stairs_grid
     #   type: occupancy_grid
     #   params:

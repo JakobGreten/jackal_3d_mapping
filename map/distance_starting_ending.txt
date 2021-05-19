@@ -1,0 +1,15 @@
+rosrun tf tf_echo /map /base_link
+gmapping:
+start 0,0,0
+end: -9.887, -2.909, 0.000
+dist  10.3061
+
+rtab:
+start 0,0,0
+end 0.142, 0.715, 0.518
+dist 0.8943
+
+zed tracking
+start 0,0,0
+end 0.429, 0.357, 0.372
+dist 0.6707
