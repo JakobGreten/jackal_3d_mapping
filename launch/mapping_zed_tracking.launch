@@ -1,6 +1,5 @@
 <launch>
     <param name="use_sim_time"  value="true" />
-    <rosparam command="load" file="$(find jackal_3d_mapping)/params/jackal.yaml" />
     
     <node pkg="topic_tools" type="relay" name="relay_lidar" args="/lidar_points_filtered /points"
     output="screen"/>

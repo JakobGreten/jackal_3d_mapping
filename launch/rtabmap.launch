@@ -1,0 +1,56 @@
+<!-- RTAB-Map launcher -->
+
+<launch>
+    <!-- Localization-only mode -->
+    <arg name="localization"            default="false"/>
+
+    <arg     if="$(arg localization)" name="args" default=""/>
+    <arg unless="$(arg localization)" name="args" default="--delete_db_on_start"/>
+
+    <!-- RGB-D related topics -->
+    <arg name="rgb_topic"               default="/zed_node/rgb/image_rect_color" />
+    <arg name="depth_topic"             default="/zed_node/depth/depth_registered" />
+    <arg name="camera_info_topic"       default="/zed_node/rgb/camera_info" />
+    <arg name="depth_camera_info_topic" default="/zed_node/depth/camera_info" />
+
+    <arg name="odom_topic"              default="/zed_node/odom" />    <!-- Odometry topic name -->
+   
+
+    <!-- RTABmapviz -->
+    <node name="rtabmapviz" pkg="rtabmap_ros" type="rtabmapviz" output="screen" args="" launch-prefix="">    
+        <remap from="rgb/image"         to="$(arg rgb_topic)"/>
+        <remap from="depth/image"       to="$(arg depth_topic)"/>
+        <remap from="rgb/camera_info"   to="$(arg camera_info_topic)"/>
+
+        <remap from="grid_map"          to="rtab_map" />
+        <remap from="odom"              to="$(arg odom_topic)"/>
+    </node> 
+
+
+    <!-- RTABmap -->
+    <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="$(arg args)" launch-prefix="">
+        <rosparam command="load" file="$(find jackal_3d_mapping)/config/rtabmap.yaml" />
+    
+        <remap from="rgb/image"         to="$(arg rgb_topic)"/>
+        <remap from="depth/image"       to="$(arg depth_topic)"/>
+        <remap from="rgb/camera_info"   to="$(arg camera_info_topic)"/>
+
+        <remap from="grid_map"          to="map" />
+        <!-- <remap from="odom"              to="$(arg odom_topic)"/> -->
+        <remap from="scan_cloud"              to="/os1_cloud_node/points"/>
+
+        <remap from="octomap_full"              to="/rtab_octomap_full"/>
+        <remap from="octomap_binary"              to="/rtab_octomap_binary"/>
+
+
+        <!-- localization mode -->
+        <param     if="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="false"/>
+        <param unless="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="true"/>
+        <param name="Mem/InitWMWithAllNodes" type="string" value="$(arg localization)"/>
+    </node>
+
+    
+
+
+
+</launch>
