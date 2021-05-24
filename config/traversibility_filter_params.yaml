@@ -1,9 +1,10 @@
+# Parameters for converting the grid map to an octomap
 octomap_to_gridmap_demo:
   octomap_service_topic: "/octomap_binary"
   min_z: -2.0
   max_z: 2.0
 
-
+# Parameters to convert the filtered grid map to an OccupancyGrid
 grid_map_visualization:
   grid_map_topic: /grid_map_filter_demo/filtered_map
   grid_map_visualizations:

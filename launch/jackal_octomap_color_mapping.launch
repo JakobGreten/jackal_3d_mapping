@@ -1,21 +1,26 @@
-
+<!-- Launches the octomap server for the creation of a colored octomap -->
 <launch>
+	
+	<!-- Launch octomap_color_server_node-->
 	<node pkg="octomap_server" type="octomap_color_server_node" name="octomap_server">
+
+		<!-- Resolution of the created octomap -->
 		<param name="resolution" value="0.05" />
 		
-		<!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
+		<!--Map frame provided by the SLAM tool-->
 		<param name="frame_id" type="string" value="map" />
 		
-		<!-- maximum range to integrate (speedup!) -->
+		<!-- maximum range of points to integrate into octomap. Set to -1 to have unlimited range-->
 		<param name="sensor_model/max_range" value="-1.0" />
 		
+		<!-- Coloring of the octomap based on height -->
 		<param name="height_map" type="bool" value="false"/>
+
+		<!-- Coloring of the octomap based on color provided by point cloud -->
 		<param name="colored_map" type="bool" value="true"/>
 		
-		<!-- data source to integrate (PointCloud2) -->
+		<!-- input point cloud topic -->
 		<remap from="cloud_in" to="/points" />
-		<!--<remap from="cloud_in" to="/zed_node/point_cloud/cloud_registered" />-->
-
 
 	
 	</node>

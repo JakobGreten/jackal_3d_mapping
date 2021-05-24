@@ -1,0 +1,7 @@
+# Parameters for converting the grid map to an octomap
+octomap_to_gridmap_demo:
+  octomap_service_topic: "/octomap_binary"
+  min_z: -2.0
+  max_z: 2.0
+
+  

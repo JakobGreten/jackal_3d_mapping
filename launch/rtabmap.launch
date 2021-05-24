@@ -1,56 +1,80 @@
-<!-- RTAB-Map launcher -->
+<!-- 
+    MIT License
+
+    Copyright (c) 2018 Stereolabs
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+ -->
+
+<!-- RTAB-Map launcher 
+     This RTAB-Map configuration is a modified configuration from the zed_rtab_example package.
+     The orignal package can be found here: https://github.com/stereolabs/zed-ros-examples/blob/master/examples/zed_rtabmap_example/launch/include/sl_rtabmap.launch.xml (Accessed 24.05.21)
+-->
 
 <launch>
     <!-- Localization-only mode -->
-    <arg name="localization"            default="false"/>
+    <arg name="localization" default="false" />
 
-    <arg     if="$(arg localization)" name="args" default=""/>
-    <arg unless="$(arg localization)" name="args" default="--delete_db_on_start"/>
+    <arg if="$(arg localization)" name="args" default="" />
+    <arg unless="$(arg localization)" name="args" default="--delete_db_on_start" />
 
     <!-- RGB-D related topics -->
-    <arg name="rgb_topic"               default="/zed_node/rgb/image_rect_color" />
-    <arg name="depth_topic"             default="/zed_node/depth/depth_registered" />
-    <arg name="camera_info_topic"       default="/zed_node/rgb/camera_info" />
+    <arg name="rgb_topic" default="/zed_node/rgb/image_rect_color" />
+    <arg name="depth_topic" default="/zed_node/depth/depth_registered" />
+    <arg name="camera_info_topic" default="/zed_node/rgb/camera_info" />
     <arg name="depth_camera_info_topic" default="/zed_node/depth/camera_info" />
 
-    <arg name="odom_topic"              default="/zed_node/odom" />    <!-- Odometry topic name -->
-   
+    <arg name="odom_topic" default="/zed_node/odom" /> <!-- Odometry topic name -->
+
 
     <!-- RTABmapviz -->
-    <node name="rtabmapviz" pkg="rtabmap_ros" type="rtabmapviz" output="screen" args="" launch-prefix="">    
-        <remap from="rgb/image"         to="$(arg rgb_topic)"/>
-        <remap from="depth/image"       to="$(arg depth_topic)"/>
-        <remap from="rgb/camera_info"   to="$(arg camera_info_topic)"/>
+    <node name="rtabmapviz" pkg="rtabmap_ros" type="rtabmapviz" output="screen" args="" launch-prefix="">
+        <remap from="rgb/image" to="$(arg rgb_topic)" />
+        <remap from="depth/image" to="$(arg depth_topic)" />
+        <remap from="rgb/camera_info" to="$(arg camera_info_topic)" />
 
-        <remap from="grid_map"          to="rtab_map" />
-        <remap from="odom"              to="$(arg odom_topic)"/>
-    </node> 
+        <remap from="grid_map" to="rtab_map" />
+        <remap from="odom" to="$(arg odom_topic)" />
+    </node>
 
 
     <!-- RTABmap -->
     <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="$(arg args)" launch-prefix="">
         <rosparam command="load" file="$(find jackal_3d_mapping)/config/rtabmap.yaml" />
-    
-        <remap from="rgb/image"         to="$(arg rgb_topic)"/>
-        <remap from="depth/image"       to="$(arg depth_topic)"/>
-        <remap from="rgb/camera_info"   to="$(arg camera_info_topic)"/>
 
-        <remap from="grid_map"          to="map" />
-        <!-- <remap from="odom"              to="$(arg odom_topic)"/> -->
-        <remap from="scan_cloud"              to="/os1_cloud_node/points"/>
+        <remap from="rgb/image" to="$(arg rgb_topic)" />
+        <remap from="depth/image" to="$(arg depth_topic)" />
+        <remap from="rgb/camera_info" to="$(arg camera_info_topic)" />
 
-        <remap from="octomap_full"              to="/rtab_octomap_full"/>
-        <remap from="octomap_binary"              to="/rtab_octomap_binary"/>
+        <remap from="grid_map" to="map" />
+
+        <remap from="scan_cloud" to="/os1_cloud_node/points" />
+
+        <remap from="octomap_full" to="/rtab_octomap_full" />
+        <remap from="octomap_binary" to="/rtab_octomap_binary" />
 
 
         <!-- localization mode -->
-        <param     if="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="false"/>
-        <param unless="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="true"/>
-        <param name="Mem/InitWMWithAllNodes" type="string" value="$(arg localization)"/>
+        <param if="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="false" />
+        <param unless="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="true" />
+        <param name="Mem/InitWMWithAllNodes" type="string" value="$(arg localization)" />
     </node>
-
-    
-
 
 
 </launch>

@@ -13,23 +13,35 @@
 #include <termios.h>
 
 
-pcl::PointCloud<pcl::PointXYZI>::Ptr pclPCLidar(new pcl::PointCloud<pcl::PointXYZI>);
-pcl::PointCloud<pcl::PointXYZI>::Ptr pclPCFilteredLidar(new pcl::PointCloud<pcl::PointXYZI>);
-sensor_msgs::PointCloud2::Ptr pcFilteredLidar(new sensor_msgs::PointCloud2);
-//pcl::visualization::CloudViewer viewer("Simple Cloud Viewer");
+/*
+ * Filter node for the OS1 LIDAR. Removes all points that are outside of a specified range on the Z axis.
+ */
 
-ros::Publisher publicador;
+// Original point cloud
+pcl::PointCloud<pcl::PointXYZI>::Ptr pclPCLidar(new pcl::PointCloud<pcl::PointXYZI>);
+
+// Filtered point cloud as pcl::PointCloud
+pcl::PointCloud<pcl::PointXYZI>::Ptr pclPCFilteredLidar(new pcl::PointCloud<pcl::PointXYZI>);
+
+// Filtered point cloud as PointCloud2
+sensor_msgs::PointCloud2::Ptr pcFilteredLidar(new sensor_msgs::PointCloud2);
+
+ros::Publisher publisher;
 tf::StampedTransform transform;
 
-
+/**
+ * Callback for the point cloud from the LIDAR. Publishes filtered point cloud.
+ */
 void lidarCallback(sensor_msgs::PointCloud2 pcLidar)
 {
+    //convert from PointCloud2 to pcl::PointCloud
     pcl::fromROSMsg(pcLidar, *pclPCLidar);
     
-    
+    // The CropBox filter is used to filter the point cloud.
     pcl::CropBox<pcl::PointXYZI> boxFilter;
     boxFilter.setInputCloud(pclPCLidar);
 
+    // Only points that are outside of a thresholded range on the Z axis are filtered.
     float lidarMinX = -std::numeric_limits<float>::max();
     float lidarMinY = -std::numeric_limits<float>::max();;
     float lidarMinZ = -0.5;
@@ -39,16 +51,21 @@ void lidarCallback(sensor_msgs::PointCloud2 pcLidar)
 
     boxFilter.setMin(Eigen::Vector4f(lidarMinX, lidarMinY, lidarMinZ, 1.0));
     boxFilter.setMax(Eigen::Vector4f(lidarMaxX, lidarMaxY, lidarMaxZ, 1.0));
-    //pass.setFilterLimitsNegative (true);
+
+
     boxFilter.filter(*pclPCFilteredLidar);
 
-
+    // convert back to PointCloud2
     pcl::toROSMsg(*pclPCFilteredLidar, *pcFilteredLidar);
-    publicador.publish(pcFilteredLidar);
+
+    // publish filtered point cloud.
+    publisher.publish(pcFilteredLidar);
 }
 
 
-
+/**
+ * Main method gets called when starting the node.
+ */
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "FilterNode");
@@ -61,26 +78,24 @@ int main(int argc, char **argv)
         ROS_INFO_STREAM("Different PCL Version detected. Recommended Version: 1.7.2");
     }
 
-    ros::Subscriber lidar_subscriptor = ns.subscribe("os1_cloud_node/points", 1, lidarCallback);
-    //ros::Subscriber zed_subscriptor = ns.subscribe("/zed_node/point_cloud/cloud_registered", 1, zedCallback);
-    //ros::Subscriber zed_subscriptor = ns.subscribe("/zed_points", 10, zedCallback);
-
-    publicador = ns.advertise<sensor_msgs::PointCloud2>("lidar_points_filtered", 10);
+    // Subscribe to the topic the point cloud is published to.
+    ros::Subscriber lidar_subscriber = ns.subscribe("os1_cloud_node/points", 1, lidarCallback);
+    
+    publisher = ns.advertise<sensor_msgs::PointCloud2>("lidar_points_filtered", 10);
 
 
    
 
 
 
-
     ros::Rate loop_rate(20);
     ros::spinOnce();
+
+    // Main loop
     while (ros::ok())
     {
         ros::spinOnce();
         loop_rate.sleep();
-
-        
                
     }
     ROS_INFO("Fin suscriptor");

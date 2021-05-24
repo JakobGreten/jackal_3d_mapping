@@ -1,8 +1,0 @@
-rosrun tf tf_echo /map /base_link
-gmapping:
-start 0,0,0
-end: -9.887, -2.909, 0.000
-
-rtab:
-start 0,0,0
-end 0.142, 0.715, 0.518

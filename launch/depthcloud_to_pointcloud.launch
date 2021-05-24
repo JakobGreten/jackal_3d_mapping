@@ -1,15 +1,15 @@
+<!-- This launch file converts a depth image to a point cloud.
+     This configuration is losely based on this example: https://gist.github.com/bhaskara/2400165 (Accesses 24.05.21)
+      
+-->
 <launch>
 
-  <!--
-  To distinguish between the cases where the rgb image is
-  1280x1024 versus 640x480.  This affects the pipeline.
-  -->
-  <arg name="high_res_rgb" default="true"/>
-  <arg name="cloud_input_ns" value="camera/rgb_downsampled"
-       if="$(arg high_res_rgb)"/>
-  <arg name="cloud_input_ns" value="camera/rgb" unless="$(arg high_res_rgb)"/>
 
+
+  <!-- Whether or not to generate a colored point cloud -->
   <arg name="generate_colored_pointcloud" default="false"/>
+
+  <!-- Decimation value -->
   <arg name="dec_x" default="16"/>
   <arg name="dec_y" default="16"/>
 
@@ -17,8 +17,7 @@
   <node pkg="nodelet" type="nodelet" args="manager"
         name="record_player_manager" output="screen"/>
 
-  <!-- Debayer and undistort the rgb image
-       TODO: this should be split into nodelets -->
+  
   <node 
     pkg="image_proc" 
     type="image_proc" 
@@ -30,8 +29,7 @@
 
   <!-- Downsample depth image before converting to cloud,-->
   <node pkg="nodelet" type="nodelet" name="downsample_depth"
-        args="load image_proc/crop_decimate record_player_manager --no-bond"
-        if="$(arg high_res_rgb)">
+        args="load image_proc/crop_decimate record_player_manager --no-bond">
     <param name="decimation_x" value="$(arg dec_x)"/>
     <param name="decimation_y" value="$(arg dec_y)"/>
     <param name="width" value="1280"/>
@@ -40,9 +38,7 @@
     <remap from="camera/camera_info" to="zed_node/depth/camera_info"/>
     <remap from="camera_out/image_raw" to="depth_cam/depth_filtered"/>
 
-    <!--<remap from="camera_out" to="$(arg cloud_input_ns)"/>
-    <remap from="camera/rgb/image_raw" to="camera/rgb/image_rect_color"/>
-    <remap from="$(arg cloud_input_ns)/image_raw" to="$(arg cloud_input_ns)/image_rect_color"/-->
+
   </node>
   
 
@@ -52,7 +48,6 @@
         args="load depth_image_proc/point_cloud_xyz record_player_manager --no-bond">
     <remap from="image_rect" to="depth_cam/depth_filtered"/>
     <remap from="points" to="zed_points_downsampled"/>
-    <!--<remap from="rgb/image_rect_color" to="$(arg cloud_input_ns)/image_rect_color"/>-->
     <remap from="camera_info" to="depth_cam/camera_info"/>
   </node>
   </group>
@@ -61,8 +56,7 @@
 
   <!-- Downsample rgb image before converting to cloud,-->
   <node pkg="nodelet" type="nodelet" name="downsample_rgb"
-        args="load image_proc/crop_decimate record_player_manager --no-bond"
-        if="$(arg high_res_rgb)">
+        args="load image_proc/crop_decimate record_player_manager --no-bond">
     <param name="decimation_x" value="$(arg dec_x)"/>
     <param name="decimation_y" value="$(arg dec_y)"/>
     <param name="width" value="1280"/>
@@ -71,12 +65,10 @@
     <remap from="camera/camera_info" to="zed_node/rgb/camera_info"/>
     <remap from="camera_out/image_raw" to="rgb_cam/rgb_filtered"/>
 
-    <!--<remap from="camera_out" to="$(arg cloud_input_ns)"/>
-    <remap from="camera/rgb/image_raw" to="camera/rgb/image_rect_color"/>
-    <remap from="$(arg cloud_input_ns)/image_raw" to="$(arg cloud_input_ns)/image_rect_color"/-->
+    
   </node>
 
-
+  <!-- Convert rgb image to point cloud -->
   <node pkg="nodelet" type="nodelet" name="cloudify"
         args="load depth_image_proc/point_cloud_xyzrgb record_player_manager --no-bond">
     <remap from="depth_registered/image_rect" to="depth_cam/depth_filtered"/>

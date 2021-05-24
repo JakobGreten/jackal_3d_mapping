@@ -1,52 +1,50 @@
+# Configuration of the grid map filter chain which calculates traversibility and occupancy based on surface normals
 grid_map_filters:
 
   - name: buffer_normalizer
     type: gridMapFilters/BufferNormalizerFilter
 
   
-  # Compute surface normals.
+  # Compute the surface normals.
   - name: surface_normals
     type: gridMapFilters/NormalVectorsFilter
     params:
       input_layer: elevation
       output_layers_prefix: normal_vectors_
       radius: 0.1
-      #radius: 0.225
-      #radius: 0.5
       normal_vector_positive_axis: z
 
 
-  # Add a color layer for visualization based on the surface normal.
+  # Visualize surface normals as color layer.
   - name: normal_color_map
     type: gridMapFilters/NormalColorMapFilter
     params:
       input_layers_prefix: normal_vectors_
       output_layer: normal_color
 
-  # Compute slope from surface normal.
+  # Compute the slope based of the surface normals.
   - name: slope
     type: gridMapFilters/MathExpressionFilter
     params:
       output_layer: slope
       expression: acos(normal_vectors_z)
 
-
+  # Scale the slope layer.
   - name: traversability_slope
     type: gridMapFilters/MathExpressionFilter
     params:
       output_layer: traversability
       expression: (slope / 0.6)
-      #expression: (1.0 - (slope / 0.6)) 
 
 
-  # # Duplicate layer.
+  # Duplicate traversibility layer to create occupancy layer.
   - name: duplicate
     type: gridMapFilters/DuplicationFilter
     params:
       input_layer: traversability
       output_layer: occupancy
 
-  # # Set lower threshold on traversability.
+  # # Set lower threshold on occupancy layer.
   - name: traversability_lower_threshold
     type: gridMapFilters/ThresholdFilter
     params:
@@ -54,12 +52,12 @@ grid_map_filters:
       lower_threshold: 1.0
       set_to: .nan
 
-  # # Set upper threshold on traversability.
+  # # Set upper threshold on occupancy layer.
   - name: traversability_upper_threshold
     type: gridMapFilters/ThresholdFilter
     params:
       layer: occupancy
       upper_threshold: 1.0
-      set_to: 1.0 # Other uses: .nan, .inf
+      set_to: 1.0 
 
   

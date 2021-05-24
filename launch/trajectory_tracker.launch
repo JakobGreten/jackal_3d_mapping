@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-
+<!-- Tracks the pose estimate using the hector_trajectory_server package -->
 <launch>
 
   <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="hector_trajectory_server" output="screen">
@@ -8,14 +8,5 @@
     <param name="trajectory_update_rate" type="double" value="4" />
     <param name="trajectory_publish_rate" type="double" value="0.25" />
   </node>
-
-
-  <!-- <node pkg="hector_geotiff" type="geotiff_node" name="hector_geotiff_node" output="screen" launch-prefix="nice -n 15">
-    <remap from="map" to="/dynamic_map" />
-    <param name="map_file_path" type="string" value="$(find hector_geotiff)/maps" />
-    <param name="map_file_base_name" type="string" value="hector_slam_map" />
-    <param name="draw_background_checkerboard" type="bool" value="true" />
-    <param name="draw_free_space_grid" type="bool" value="true" />
-  </node> -->
 
 </launch>

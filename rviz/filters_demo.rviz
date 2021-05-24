@@ -135,9 +135,9 @@ Visualization Manager:
       Autocompute Intensity Bounds: false
       Class: grid_map_rviz_plugin/GridMap
       Color: 200; 200; 200
-      Color Layer: normal_vectors_z
+      Color Layer: traversability
       Color Transformer: IntensityLayer
-      Enabled: false
+      Enabled: true
       Height Layer: elevation
       Height Transformer: Flat
       History Length: 1
@@ -151,7 +151,7 @@ Visualization Manager:
       Topic: /grid_map_filter_demo/filtered_map
       Unreliable: false
       Use Rainbow: true
-      Value: false
+      Value: true
     - Class: rviz/Marker
       Enabled: false
       Marker Topic: /grid_map_visualization/surface_normals

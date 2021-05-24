@@ -1,3 +1,4 @@
+# Rviz configuration to visualize the mapping process in rviz.
 Panels:
   - Class: rviz/Displays
     Help Height: 78

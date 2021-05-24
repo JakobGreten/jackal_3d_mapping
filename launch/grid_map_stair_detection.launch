@@ -1,16 +1,23 @@
+<!-- Launches the opencv stair detection node along with an octomap and grid map of the test environment -->
 <launch>
-  <rosparam command="load" file="$(find jackal_3d_mapping)/config/octomap_to_gridmap_demo.yaml" />
-  <arg name="filter" default="false"/>
-  <!-- Load the octomap -->
+
+  <param name="use_sim_time"  value="false" />
+
+  <!-- load the parameter file -->
+  <rosparam command="load" file="$(find jackal_3d_mapping)/config/grid_map_stair_detection_params.yaml" />
+  
+
+  <!-- Load the octomap from a .bt file -->
   <node pkg="octomap_server" type="octomap_server_static" name="octomap_server" args="$(find jackal_3d_mapping)/map/saved_map_3.bt" output="screen"/>
 
-  <!-- Launch the octomap conversion node -->
+  <!-- Convert the octomap to a grid map -->
   <node pkg="grid_map_demos" type="octomap_to_gridmap_demo" name="octomap_to_gridmap_demo" output="screen" />
 
 
- 
+ <!-- Visualize grid map -->
   <node pkg="grid_map_visualization" type="grid_map_visualization" name="grid_map_visualization" output="screen" />
 
+  <!-- Start the OpenCV stair detection node -->
   <node pkg="jackal_3d_mapping" type="opencv_stair_classifier" name="opencv_stair_classifier" output="screen"/>
 
 </launch>
